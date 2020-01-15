@@ -8,9 +8,9 @@ from tensorflow.python.platform import gfile
 
 
 # tf record data location:
-DATA_DIR = 'data/raw/push/push_testseen'
+DATA_DIR = 'data/raw/push/push_train'
 
-OUT_DIR = 'data/processed/push/push_testseen'
+OUT_DIR = 'data/processed/push/push_train'
 
 SEQUENCE_LENGTH = 10
 
@@ -63,7 +63,7 @@ def convert():
 
         [image_batch, action_batch, state_batch] = tf.train.batch(
             [image_seq, action_seq, state_seq],
-            64,
+            1,
             num_threads=8,
             capacity=100 * 64,
             allow_smaller_final_batch=True)
@@ -75,22 +75,20 @@ def convert():
 
         if not os.path.exists(OUT_DIR):
             os.makedirs(OUT_DIR)
+            os.makedirs(os.path.join(OUT_DIR, 'image'))
+            os.makedirs(os.path.join(OUT_DIR, 'state'))
+            os.makedirs(os.path.join(OUT_DIR, 'action'))
 
         for j in range(len(files)):
-            data_length = sum(1 for _ in tf.python_io.tf_record_iterator(files[j])) // 64 + 1
-            image_bolb, action_bolb, state_bolb = [], [], []
-            for _ in range(data_length):
+            data_length = sum(1 for _ in tf.python_io.tf_record_iterator(files[j]))
+            for i in range(data_length):
                 imgs, acts, stas = sess.run([image_batch, action_batch, state_batch])
-                image_bolb.append(imgs)
-                action_bolb.append(acts)
-                state_bolb.append(stas)
-            image_bolb = np.concatenate(image_bolb, axis=0)
-            action_bolb = np.concatenate(action_bolb, axis=0)
-            state_bolb = np.concatenate(state_bolb, axis=0)
-
-            np.save(OUT_DIR + '/image_batch_' + str(j), image_bolb)
-            np.save(OUT_DIR+ '/action_batch_' + str(j), action_bolb)
-            np.save(OUT_DIR + '/state_batch_' + str(j), state_bolb)
+                imgs = imgs.squeeze().transpose([0, 3, 1, 2])
+                acts = acts.squeeze()
+                stas = stas.squeeze()
+                np.save(os.path.join(OUT_DIR, 'image', 'batch_{0}_{1}'.format(j, i)), imgs)
+                np.save(os.path.join(OUT_DIR, 'action', 'batch_{0}_{1}'.format(j, i)), acts)
+                np.save(os.path.join(OUT_DIR, 'state', 'batch_{0}_{1}'.format(j, i)), stas)
 
         coord.request_stop()
         coord.join(threads)
