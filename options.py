@@ -27,11 +27,12 @@ class Options():
         self.parser.add_argument('--use_state',  default=True, action='store_true', help='Whether or not to give the state+action to the model')
         self.parser.add_argument('--model', default='CDNA', help='model architecture to use - CDNA, DNA, or STP')
         self.parser.add_argument('--num_masks', type=int, default=10, help='number of masks, usually 1 for DNA, 10 for CDNA, STN.')
+        self.parser.add_argument('--device', default='cuda', help='cuda:[d] | cpu')
 
         # training details
         self.parser.add_argument('--print_interval', type=int, default=50, help='# iterations to output loss')
         self.parser.add_argument('--schedsamp_k', type=float, default=900.0, help='The k hyperparameter for scheduled sampling, -1 for no scheduled sampling.')
-        self.parser.add_argument('--train_val_split', type=float, default=0.95, help='The percentage of files to use for the training set, vs. the validation set.')
+        # self.parser.add_argument('--train_val_split', type=float, default=0.95, help='The percentage of files to use for the training set, vs. the validation set.')
         self.parser.add_argument('--batch_size', type=int, default=32, help='batch size for training')
         self.parser.add_argument('--learning_rate', type=float, default=0.001, help='the base learning rate of the generator')
         self.parser.add_argument('--epochs', type=int, default=10, help='# total training epoch')

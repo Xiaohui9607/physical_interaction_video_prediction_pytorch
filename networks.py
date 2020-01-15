@@ -16,7 +16,6 @@ class ConvLSTM(nn.Module):
         self.conv = nn.Conv2d(in_channels=out_channels + in_channels, out_channels=4 * out_channels, kernel_size=kernel_size, stride=1, padding=padding)
         self.forget_bias = forget_bias
 
-
     def forward(self, inputs, states):
         if states is None:
             states = (torch.zeros([inputs.shape[0], self.out_channels, inputs.shape[2], inputs.shape[3]]),
@@ -281,13 +280,6 @@ class network(nn.Module):
         idx = torch.randperm(batch_size)
         generated_examps = torch.cat([ground_truth_x[idx[:num_ground_truth]], generated_x[idx[num_ground_truth:]]], dim=0)
         return generated_examps
-
-
-if __name__ == '__main__':
-    test_model = network()
-
-
-
 
 
 
