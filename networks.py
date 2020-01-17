@@ -65,6 +65,11 @@ class network(nn.Module):
         self.k = k
         self.iter_num = iter_num
 
+        self.STATE_DIM = STATE_DIM
+        self.ACTION_DIM = ACTION_DIM
+        if not self.use_state:
+            self.STATE_DIM = 0
+            self.ACTION_DIM = 0
         # N * 3 * H * W -> N * 32 * H/2 * W/2
         self.enc0 = nn.Conv2d(in_channels=channels, out_channels=lstm_size[0], kernel_size=5, stride=2, padding=2)
         self.enc0_norm = nn.LayerNorm([lstm_size[0], self.height//2, self.width//2])
@@ -88,7 +93,7 @@ class network(nn.Module):
         # N * 64 * H/4 * W/4 -> N * 64 * H/8 * W/8
         self.enc2 = nn.Conv2d(in_channels=lstm_size[3], out_channels=lstm_size[3], kernel_size=3, stride=2, padding=1)
         # N * (10+64) * H/8 * W/8 -> N * 64 * H/8 * W/8
-        self.enc3 = nn.Conv2d(in_channels=lstm_size[3]+STATE_DIM+ACTION_DIM, out_channels=lstm_size[3], kernel_size=1, stride=1)
+        self.enc3 = nn.Conv2d(in_channels=lstm_size[3]+self.STATE_DIM+self.ACTION_DIM, out_channels=lstm_size[3], kernel_size=1, stride=1)
         # N * 64 * H/8 * W/8 -> N * 128 * H/8 * W/8
         self.lstm5 = ConvLSTM(in_channels=lstm_size[3], out_channels=lstm_size[4], kernel_size=5, padding=2)
         self.lstm5_norm = nn.LayerNorm([lstm_size[4], self.height//8, self.width//8])
