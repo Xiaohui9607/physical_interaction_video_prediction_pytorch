@@ -30,7 +30,7 @@ class Options():
         self.parser.add_argument('--device', default='cuda', help='cuda:[d] | cpu')
 
         # training details
-        self.parser.add_argument('--print_interval', type=int, default=50, help='# iterations to output loss')
+        self.parser.add_argument('--print_interval', type=int, default=10, help='# iterations to output loss')
         self.parser.add_argument('--schedsamp_k', type=float, default=900.0, help='The k hyperparameter for scheduled sampling, -1 for no scheduled sampling.')
         # self.parser.add_argument('--train_val_split', type=float, default=0.95, help='The percentage of files to use for the training set, vs. the validation set.')
         self.parser.add_argument('--batch_size', type=int, default=32, help='batch size for training')

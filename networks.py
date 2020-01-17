@@ -8,6 +8,9 @@ DNA_KERN_SIZE = 5
 STATE_DIM = 5
 ACTION_DIM = 5
 
+DEBUG = True
+if DEBUG:
+    import matplotlib.pyplot as plt
 
 class ConvLSTM(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=5, forget_bias=1.0, padding=0):
@@ -18,8 +21,8 @@ class ConvLSTM(nn.Module):
 
     def forward(self, inputs, states):
         if states is None:
-            states = (torch.zeros([inputs.shape[0], self.out_channels, inputs.shape[2], inputs.shape[3]]),
-                      torch.zeros([inputs.shape[0], self.out_channels, inputs.shape[2], inputs.shape[3]]))
+            states = (torch.zeros([inputs.shape[0], self.out_channels, inputs.shape[2], inputs.shape[3]], device=inputs.device),
+                      torch.zeros([inputs.shape[0], self.out_channels, inputs.shape[2], inputs.shape[3]], device=inputs.device))
         if not isinstance(states, tuple):
             raise TypeError("states type is not right")
 
@@ -134,6 +137,11 @@ class network(nn.Module):
         :param action: T * N * C
         :return:
         '''
+
+        import matplotlib.pyplot as plt
+        # for im in images:
+        #     plt.imshow(im[0].squeeze().detach().cpu().numpy().transpose([1, 2, 0]))
+        #     plt.show()
         lstm_state1, lstm_state2, lstm_state3, lstm_state4 = None, None, None, None
         lstm_state5, lstm_state6, lstm_state7 = None, None, None
         gen_images, gen_states = [], []
@@ -153,7 +161,7 @@ class network(nn.Module):
                 image = gen_images[-1]
             elif done_warm_start:
                 # Scheduled sampling
-                image = self.scheduled_sample(image, gen_images[-1], image.shape[0], num_ground_truth)
+                image = self.scheduled_sample(image, gen_images[-1], num_ground_truth)
             else:
                 # Always feed in ground_truth
                 image = image
@@ -217,11 +225,17 @@ class network(nn.Module):
                     transformed += self.stp_transformation(image, _input)
 
             masks = torch.relu(self.maskout(enc6))
+            # test0 = masks.detach().cpu().numpy()
             masks = torch.softmax(masks, dim=1)
+            # test = masks.detach().cpu().numpy()
             mask_list = torch.split(masks, split_size_or_sections=1, dim=1)
+
             output = mask_list[0] * image
             for layer, mask in zip(transformed, mask_list[1:]):
                 output += layer * mask
+
+            # plt.imshow(image[0].squeeze().detach().cpu().numpy().transpose([1, 2, 0]))
+            # plt.show()
             gen_images.append(output)
 
             current_state = self.stateout(state_action)
@@ -276,9 +290,8 @@ class network(nn.Module):
 
         return torch.sum(kernel*inputs, dim=1, keepdim=False)
 
-    def scheduled_sample(self, ground_truth_x, generated_x, batch_size, num_ground_truth):
-        idx = torch.randperm(batch_size)
-        generated_examps = torch.cat([ground_truth_x[idx[:num_ground_truth]], generated_x[idx[num_ground_truth:]]], dim=0)
+    def scheduled_sample(self, ground_truth_x, generated_x, num_ground_truth):
+        generated_examps = torch.cat([ground_truth_x[:num_ground_truth, ...], generated_x[num_ground_truth:, :]], dim=0)
         return generated_examps
 
 

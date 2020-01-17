@@ -8,9 +8,9 @@ from tensorflow.python.platform import gfile
 
 
 # tf record data location:
-DATA_DIR = 'data/raw/push/push_train'
+DATA_DIR = 'data/raw/push/push_testnovel'
 
-OUT_DIR = 'data/processed/push/push_train'
+OUT_DIR = 'data/processed/push/push_testnovel'
 
 SEQUENCE_LENGTH = 10
 
@@ -22,9 +22,15 @@ COLOR_CHAN = 3
 STATE_DIM = 5
 ACTION_DIM = 5
 
+IMG_WIDTH = 64
+IMG_HEIGHT = 64
+
 
 def convert():
-    with tf.Session() as sess:
+    config = tf.ConfigProto(
+        device_count={'GPU': 0}
+    )
+    with tf.Session(config=config) as sess:
         files = gfile.Glob(os.path.join(DATA_DIR, '*'))
         queue = tf.train.string_input_producer(files, shuffle=False)
         reader = tf.TFRecordReader()
@@ -50,6 +56,7 @@ def convert():
             crop_size = min(ORIGINAL_WIDTH, ORIGINAL_HEIGHT)
             image = tf.image.resize_image_with_crop_or_pad(image, crop_size, crop_size)
             image = tf.reshape(image, [1, crop_size, crop_size, COLOR_CHAN])
+            image = tf.image.resize_bicubic(image, [IMG_HEIGHT, IMG_WIDTH])
             image_seq.append(image)
 
             state = tf.reshape(features[state_name], shape=[1, STATE_DIM])
@@ -64,7 +71,7 @@ def convert():
         [image_batch, action_batch, state_batch] = tf.train.batch(
             [image_seq, action_seq, state_seq],
             1,
-            num_threads=8,
+            num_threads=1,
             capacity=100 * 64,
             allow_smaller_final_batch=True)
 
@@ -75,8 +82,11 @@ def convert():
 
         if not os.path.exists(OUT_DIR):
             os.makedirs(OUT_DIR)
+        if not os.path.exists(os.path.join(OUT_DIR, 'image')):
             os.makedirs(os.path.join(OUT_DIR, 'image'))
+        if not os.path.exists(os.path.join(OUT_DIR, 'state')):
             os.makedirs(os.path.join(OUT_DIR, 'state'))
+        if not os.path.exists(os.path.join(OUT_DIR, 'action')):
             os.makedirs(os.path.join(OUT_DIR, 'action'))
 
         for j in range(len(files)):

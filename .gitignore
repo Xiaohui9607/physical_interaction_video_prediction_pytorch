@@ -2,3 +2,5 @@
 .DS_Store
 *.tfrecord-*
 .idea
+__pycache__/
+*.py[cod]
