@@ -1,8 +1,20 @@
+import os
 import torch
 from torch import nn
 from networks import network
 from data import build_dataloader
-from utils import peak_signal_to_noise_ratio
+from torch.nn import functional as F
+
+def peak_signal_to_noise_ratio(true, pred):
+  """Image quality metric based on maximal signal power vs. power of the noise.
+
+  Args:
+    true: the ground truth image.
+    pred: the predicted image.
+  Returns:
+    peak signal to noise ratio (PSNR)
+  """
+  return 10.0 * torch.log(torch.tensor(1.0) / F.mse_loss(true, pred)) / torch.log(torch.tensor(10.0))
 
 
 class Model():
@@ -52,10 +64,10 @@ class Model():
             self.net.iter_num += 1
 
     def train(self):
-        for epoch_i in range(1, self.opt.epochs+1):
+        for epoch_i in range(0, self.opt.epochs):
             self.train_epoch(epoch_i)
             self.evaluate(epoch_i)
-            # self.save_weight(epoch_i)
+            self.save_weight(epoch_i)
 
     def evaluate(self, epoch):
         with torch.no_grad():
@@ -78,7 +90,7 @@ class Model():
             print("evaluation epoch: %3d, recon_loss: %6f, state_loss: %6f" % (epoch, recon_loss, state_loss))
 
     def save_weight(self, epoch):
-        torch.save(self.net.state_dict(), "net_epoch_%d.pth" % epoch)
+        torch.save(self.net.state_dict(), os.path.join(self.opt.output_dir, "net_epoch_%d.pth" % epoch))
 
     def load_weight(self):
         self.net.load_state_dict(torch.load(self.opt.pretrained_model))

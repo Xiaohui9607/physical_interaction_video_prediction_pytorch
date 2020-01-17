@@ -8,9 +8,6 @@ DNA_KERN_SIZE = 5
 STATE_DIM = 5
 ACTION_DIM = 5
 
-DEBUG = True
-if DEBUG:
-    import matplotlib.pyplot as plt
 
 class ConvLSTM(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=5, forget_bias=1.0, padding=0):
@@ -138,10 +135,6 @@ class network(nn.Module):
         :return:
         '''
 
-        import matplotlib.pyplot as plt
-        # for im in images:
-        #     plt.imshow(im[0].squeeze().detach().cpu().numpy().transpose([1, 2, 0]))
-        #     plt.show()
         lstm_state1, lstm_state2, lstm_state3, lstm_state4 = None, None, None, None
         lstm_state5, lstm_state6, lstm_state7 = None, None, None
         gen_images, gen_states = [], []
@@ -225,17 +218,13 @@ class network(nn.Module):
                     transformed += self.stp_transformation(image, _input)
 
             masks = torch.relu(self.maskout(enc6))
-            # test0 = masks.detach().cpu().numpy()
             masks = torch.softmax(masks, dim=1)
-            # test = masks.detach().cpu().numpy()
             mask_list = torch.split(masks, split_size_or_sections=1, dim=1)
 
             output = mask_list[0] * image
             for layer, mask in zip(transformed, mask_list[1:]):
                 output += layer * mask
 
-            # plt.imshow(image[0].squeeze().detach().cpu().numpy().transpose([1, 2, 0]))
-            # plt.show()
             gen_images.append(output)
 
             current_state = self.stateout(state_action)
@@ -256,7 +245,7 @@ class network(nn.Module):
 
     def cdna_transformation(self, image, cdna_input):
         batch_size, height, width = image.shape[0], image.shape[2], image.shape[3]
-        #
+
         cdna_kerns = self.fc(cdna_input)
         cdna_kerns = cdna_kerns.view(batch_size, self.num_masks, 1, DNA_KERN_SIZE, DNA_KERN_SIZE)
         cdna_kerns = torch.relu(cdna_kerns - RELU_SHIFT) + RELU_SHIFT

@@ -19,8 +19,7 @@ class Options():
         self.parser.add_argument('--channels', type=int, default=3, help='# channel of input')
         self.parser.add_argument('--height', type=int, default=64, help='height of image')
         self.parser.add_argument('--width', type=int, default=64, help='width of image')
-        self.parser.add_argument('--output_dir', default='', help='directory for model checkpoints.')
-        self.parser.add_argument('--event_log_dir', default='', help='directory for writing summary.')
+        self.parser.add_argument('--output_dir', default='', help='directory for model weight.')
         self.parser.add_argument('--pretrained_model', default='', help='filepath of a pretrained model to initialize from.')
         self.parser.add_argument('--sequence_length', type=int, default=10, help='sequence length, including context frames.')
         self.parser.add_argument('--context_frames', type=int, default=2, help= '# of frames before predictions.')
@@ -32,7 +31,6 @@ class Options():
         # training details
         self.parser.add_argument('--print_interval', type=int, default=10, help='# iterations to output loss')
         self.parser.add_argument('--schedsamp_k', type=float, default=900.0, help='The k hyperparameter for scheduled sampling, -1 for no scheduled sampling.')
-        # self.parser.add_argument('--train_val_split', type=float, default=0.95, help='The percentage of files to use for the training set, vs. the validation set.')
         self.parser.add_argument('--batch_size', type=int, default=32, help='batch size for training')
         self.parser.add_argument('--learning_rate', type=float, default=0.001, help='the base learning rate of the generator')
         self.parser.add_argument('--epochs', type=int, default=10, help='# total training epoch')
@@ -42,7 +40,8 @@ class Options():
         """ Parse Arguments.
         """
         self.opt = self.parser.parse_args()
-
+        if not os.path.exists(self.opt.output_dir):
+            os.makedirs(self.opt.output_dir)
         return self.opt
 
 if __name__ == '__main__':
