@@ -3,7 +3,7 @@ Unsupervised Learning for Physical Interaction through Video Prediction
 
 Based on the paper from C. Finn, I. Goodfellow and S. Levine: "Unsupervised Learning for Physical Interaction through Video Prediction". Implemented in Pytorch.
 
-Creating the data need for training in
+Creating the data need for training
 ------------
 ```bash 
 $ sh download_data.sh push_datafiles.txt # Will download all the data from Google's ftp to data/raw
