@@ -1,5 +1,5 @@
 *.npy
-.DS_Store
+**/.DS_Store
 *.tfrecord-*
 .idea
 __pycache__/
