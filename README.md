@@ -14,7 +14,7 @@ Running the training process
 ------------
 ```bash
 $ python ./train.py \
-  --data_dir data/processed/push/push_train \ # path to the training set.
+  --data_dir data/processed/push \ # path to the training set.
   --model CDNA \ # the model type to use - DNA, CDNA, or STP
   --output_dir ./weights \ # where to save model checkpoints
   --pretrained_model model \ # path to model to initialize from, random if emtpy
