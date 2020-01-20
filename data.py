@@ -84,18 +84,3 @@ def build_dataloader(opt):
     testseen_dl = DataLoader(dataset=testseen_ds, batch_size=opt.batch_size, shuffle=False, drop_last=False)
     return train_dl, testseen_dl
 
-
-if __name__ == '__main__':
-    from options import Options
-    from matplotlib import  pyplot as plt
-    from torchvision.transforms import functional as F
-    opt = Options().parse()
-    opt.device = 'cuda'
-    dataloader, _ = build_dataloader(opt)
-    for image, action, state in dataloader:
-        # test = [F.to_pil_image(im) for im in image[0].unbind(dim=0)]
-        # for tmp in test:
-        #     plt.figure(1)
-        #     plt.imshow(tmp)
-        #     plt.show()
-        pass
