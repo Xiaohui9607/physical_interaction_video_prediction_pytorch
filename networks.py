@@ -147,7 +147,7 @@ class network(nn.Module):
         if self.k == -1:
             feedself = True
         else:
-            num_ground_truth = round(images[0].shape[0] * (self.k / (math.exp(self.iter_num/self.k) + self.k)))
+            num_ground_truth = round(images[0].shape[1] * (self.k / (math.exp(self.iter_num/self.k) + self.k)))
             feedself = False
 
         for image, action in zip(images[:-1], actions[:-1]):
