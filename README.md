@@ -1,16 +1,17 @@
 Unsupervised Learning for Physical Interaction through Video Prediction
 ==============================
 
-Based on the paper from C. Finn, I. Goodfellow and S. Levine: "Unsupervised Learning for Physical Interaction through Video Prediction". Implemented in Pytorch.
+Based on the paper from C. Finn, I. Goodfellow and S. Levine: "Unsupervised Learning for Physical Interaction through Video Prediction". Implemented in Pytorch.\
+https://papers.nips.cc/paper/6161-unsupervised-learning-for-physical-interaction-through-video-prediction.pdf
 
-Creating the data need for training
+Prepare the data need for training
 ------------
 ```bash 
 $ sh download_data.sh push_datafiles.txt # Will download all the data from Google's ftp to data/raw
 $ python ./tfrecord_to_dataset.py
 ```
 
-Running the training process
+Training
 ------------
 ```bash
 $ python ./train.py \
