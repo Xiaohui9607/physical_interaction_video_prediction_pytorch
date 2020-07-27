@@ -1,7 +1,7 @@
 Unsupervised Learning for Physical Interaction through Video Prediction
 ==============================
 
-Based on the paper from C. Finn, I. Goodfellow and S. Levine: [*"Unsupervised Learning for Physical Interaction through Video Prediction"*](https://papers.nips.cc/paper/6161-unsupervised-learning-for-physical-interaction-through-video-prediction.pdf), Implemented in Pytorch.\
+Based on the paper from C. Finn, I. Goodfellow and S. Levine: [*"Unsupervised Learning for Physical Interaction through Video Prediction"*](https://papers.nips.cc/paper/6161-unsupervised-learning-for-physical-interaction-through-video-prediction.pdf), Implemented in Pytorch.
 
 Prepare the data need for training
 ------------
